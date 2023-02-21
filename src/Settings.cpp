@@ -1,5 +1,7 @@
 #include "Settings.h"
 
+#include <SimpleIni.h>
+
 void Settings::ReadSettings()
 {
 	constexpr auto path = L"Data/MCM/Settings/DodgeFramework.ini";

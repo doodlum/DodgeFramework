@@ -7,7 +7,7 @@ namespace Events
 	public:
 		using EventResult = RE::BSEventNotifyControl;
 
-		static InputEventHandler*	GetSingleton();
+		static InputEventHandler* GetSingleton();
 
 		virtual EventResult			ProcessEvent(RE::InputEvent* const* a_event, RE::BSTEventSource<RE::InputEvent*>* a_eventSource) override;
 

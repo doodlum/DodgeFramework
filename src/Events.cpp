@@ -62,8 +62,8 @@ namespace Events
 				continue;
 			}
 
-			if (key == Settings::uDodgeKey )
-				{
+			if (key == Settings::uDodgeKey)
+			{
 				Dodge();
 				break;
 			}
@@ -80,11 +80,11 @@ namespace Events
 		auto ui = RE::UI::GetSingleton();
 		auto controlMap = RE::ControlMap::GetSingleton();
 
-		if (ui->GameIsPaused() || !controlMap->IsMovementControlsEnabled() || !controlMap->IsLookingControlsEnabled() || ui->IsMenuOpen("Dialogue Menu") 
-			|| playerCharacter->GetSitSleepState() != RE::SIT_SLEEP_STATE::kNormal || playerCharacter->GetActorValue(RE::ActorValue::kStamina) <= 0) {
+		if (ui->GameIsPaused() || !controlMap->IsMovementControlsEnabled() || !controlMap->IsLookingControlsEnabled() || ui->IsMenuOpen("Dialogue Menu")
+			|| playerCharacter->AsActorState()->GetSitSleepState() != RE::SIT_SLEEP_STATE::kNormal || playerCharacter->AsActorValueOwner()->GetActorValue(RE::ActorValue::kStamina) <= 0) {
 			return;
 		}
-		
+
 		if (!playerCharacter || !playerControls)
 		{
 			return;
@@ -93,7 +93,7 @@ namespace Events
 		RE::BShkbAnimationGraph* animationGraph = nullptr;
 		RE::BSTSmartPointer<RE::BSAnimationGraphManager> animationGraphManagerPtr;
 		if (playerCharacter->GetAnimationGraphManager(animationGraphManagerPtr)) {
-			animationGraph = animationGraphManagerPtr->graphs[animationGraphManagerPtr->activeGraph].get();
+			animationGraph = animationGraphManagerPtr->graphs[animationGraphManagerPtr->GetRuntimeData().activeGraph].get();
 		}
 
 		if (!animationGraph)
