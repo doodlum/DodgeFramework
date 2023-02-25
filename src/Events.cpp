@@ -90,22 +90,11 @@ namespace Events
 			return;
 		}
 
-		RE::BShkbAnimationGraph* animationGraph = nullptr;
-		RE::BSTSmartPointer<RE::BSAnimationGraphManager> animationGraphManagerPtr;
-		if (playerCharacter->GetAnimationGraphManager(animationGraphManagerPtr)) {
-			animationGraph = animationGraphManagerPtr->graphs[animationGraphManagerPtr->GetRuntimeData().activeGraph].get();
-		}
-
-		if (!animationGraph)
-		{
-			return;
-		}
-
 		auto normalizedInputDirection = Vec2Normalize(playerControls->data.prevMoveVec);
 		if (normalizedInputDirection.x == 0.f && normalizedInputDirection.y == 0.f)
 		{
-			animationGraph->SetGraphVariableFloat("Dodge_Angle", PI);
-			animationGraph->SetGraphVariableInt("Dodge_Direction", kNeutral);
+			playerCharacter->SetGraphVariableFloat("Dodge_Angle", PI);
+			playerCharacter->SetGraphVariableInt("Dodge_Direction", kNeutral);
 			playerCharacter->NotifyAnimationGraph("Dodge_N");
 			playerCharacter->NotifyAnimationGraph("Dodge");
 			logger::debug("neutral");
@@ -117,64 +106,64 @@ namespace Events
 
 		if (dodgeAngle >= -PI8 && dodgeAngle < PI8)
 		{
-			animationGraph->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
-			animationGraph->SetGraphVariableInt("Dodge_Direction", kForward);
+			playerCharacter->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
+			playerCharacter->SetGraphVariableInt("Dodge_Direction", kForward);
 			playerCharacter->NotifyAnimationGraph("Dodge_F");
 			playerCharacter->NotifyAnimationGraph("Dodge");
 			logger::debug("forward");
 		}
 		else if (dodgeAngle >= PI8 && dodgeAngle < 3 * PI8)
 		{
-			animationGraph->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
-			animationGraph->SetGraphVariableInt("Dodge_Direction", kRightForward);
+			playerCharacter->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
+			playerCharacter->SetGraphVariableInt("Dodge_Direction", kRightForward);
 			playerCharacter->NotifyAnimationGraph("Dodge_RF");
 			playerCharacter->NotifyAnimationGraph("Dodge");
 			logger::debug("right-forward");
 		}
 		else if (dodgeAngle >= 3 * PI8 && dodgeAngle < 5 * PI8)
 		{
-			animationGraph->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
-			animationGraph->SetGraphVariableInt("Dodge_Direction", kRight);
+			playerCharacter->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
+			playerCharacter->SetGraphVariableInt("Dodge_Direction", kRight);
 			playerCharacter->NotifyAnimationGraph("Dodge_R");
 			playerCharacter->NotifyAnimationGraph("Dodge");
 			logger::debug("right");
 		}
 		else if (dodgeAngle >= 5 * PI8 && dodgeAngle < 7 * PI8)
 		{
-			animationGraph->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
-			animationGraph->SetGraphVariableInt("Dodge_Direction", kRightBackward);
+			playerCharacter->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
+			playerCharacter->SetGraphVariableInt("Dodge_Direction", kRightBackward);
 			playerCharacter->NotifyAnimationGraph("Dodge_RB");
 			playerCharacter->NotifyAnimationGraph("Dodge");
 			logger::debug("right-backward");
 		}
 		else if (dodgeAngle >= 7 * PI8 || dodgeAngle < 7 * -PI8)
 		{
-			animationGraph->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
-			animationGraph->SetGraphVariableInt("Dodge_Direction", kBackward);
+			playerCharacter->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
+			playerCharacter->SetGraphVariableInt("Dodge_Direction", kBackward);
 			playerCharacter->NotifyAnimationGraph("Dodge_B");
 			playerCharacter->NotifyAnimationGraph("Dodge");
 			logger::debug("backward");
 		}
 		else if (dodgeAngle >= 7 * -PI8 && dodgeAngle < 5 * -PI8)
 		{
-			animationGraph->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
-			animationGraph->SetGraphVariableInt("Dodge_Direction", kLeftBackward);
+			playerCharacter->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
+			playerCharacter->SetGraphVariableInt("Dodge_Direction", kLeftBackward);
 			playerCharacter->NotifyAnimationGraph("Dodge_LB");
 			playerCharacter->NotifyAnimationGraph("Dodge");
 			logger::debug("left-backward");
 		}
 		else if (dodgeAngle >= 5 * -PI8 && dodgeAngle < 3 * -PI8)
 		{
-			animationGraph->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
-			animationGraph->SetGraphVariableInt("Dodge_Direction", kLeft);
+			playerCharacter->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
+			playerCharacter->SetGraphVariableInt("Dodge_Direction", kLeft);
 			playerCharacter->NotifyAnimationGraph("Dodge_L");
 			playerCharacter->NotifyAnimationGraph("Dodge");
 			logger::debug("left");
 		}
 		else if (dodgeAngle >= 3 * -PI8 && dodgeAngle < -PI8)
 		{
-			animationGraph->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
-			animationGraph->SetGraphVariableInt("Dodge_Direction", kLeftForward);
+			playerCharacter->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
+			playerCharacter->SetGraphVariableInt("Dodge_Direction", kLeftForward);
 			playerCharacter->NotifyAnimationGraph("Dodge_LF");
 			playerCharacter->NotifyAnimationGraph("Dodge");
 			logger::debug("left-forward");
