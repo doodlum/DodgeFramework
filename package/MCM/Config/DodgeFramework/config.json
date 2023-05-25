@@ -1,6 +1,6 @@
 {
     "modName": "DodgeFramework",
-    "displayName": "Dodge Framework",
+    "displayName": "Simonrim Dodge Thing",
     "minMcmVersion": 9,
     "cursorFillMode": "topToBottom",
     "content": [
@@ -40,6 +40,69 @@
             "ignoreConflicts": false,
             "valueOptions": {
               "sourceType": "ModSettingInt"
+            }
+        },
+        {
+            "text": "$DodgeFramework_Gameplay_Header",
+            "type": "header"
+        },
+        {
+            "id": "bUsePerkRestrictions:Gameplay",
+            "text": "$DodgeFramework_UsePerkRestrictions_OptionText",
+            "type": "toggle",
+            "help": "$DodgeFramework_UsePerkRestrictions_InfoText",
+            "groupControl": 2,
+            "valueOptions": {
+                "sourceType": "ModSettingBool"
+            }
+        },
+        {
+            "id": "sStepDodgePerk:Gameplay",
+            "text": "$DodgeFramework_StepDodgePerk_OptionText",
+            "type": "input",
+            "help": "$DodgeFramework_StepDodgePerk_InfoText",
+            "groupCondition": 2
+        },
+        {
+            "id": "sDodgeRollPerk:Gameplay",
+            "text": "$DodgeFramework_DodgeRollPerk_OptionText",
+            "type": "input",
+            "help": "$DodgeFramework_DodgeRollPerk_InfoText",
+            "groupCondition": 2
+        },
+        {
+            "id": "bUseDefaultDodgeRoll:Gameplay",
+            "text": "$DodgeFramework_DefaultDodgeRoll_OptionText",
+            "type": "toggle",
+            "help": "$DodgeFramework_DefaultDodgeRoll_InfoText",
+            "groupCondition": {"NOT": 2},
+            "valueOptions": {
+                "sourceType": "ModSettingBool"
+            }
+        },
+        {
+            "id": "fStaminaCost:Gameplay",
+            "text": "$DodgeFramework_StaminaCost_OptionText",
+            "type": "slider",
+            "help": "$DodgeFramework_StaminaCost_InfoText",
+            "valueOptions": {
+                "min": 0.0,
+                "max": 100.0,
+                "step": 1.0,
+                "formatString": "{0}",
+                "sourceType": "ModSettingFloat"
+            }
+        },        {
+            "id": "fIFrameDuration:Gameplay",
+            "text": "$DodgeFramework_IFrameDuration_OptionText",
+            "type": "slider",
+            "help": "$DodgeFramework_IFrameDuration_InfoText",
+            "valueOptions": {
+                "min": 0.0,
+                "max": 10.0,
+                "step": 0.01,
+                "formatString": "{2} s",
+                "sourceType": "ModSettingFloat"
             }
         }
     ]

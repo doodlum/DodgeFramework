@@ -9,16 +9,19 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 	case SKSE::MessagingInterface::kDataLoaded:
 		Events::SinkEventHandlers();
 		Settings::ReadSettings();
-		if (!GetModuleHandle(L"MaxsuIFrame.dll"))
-		{
-			if (REL::Module::IsAE()) {
-				RE::DebugMessageBox("IFrame Generator RE must be installed for DMCO\n Install the \"AE Support\" version");
-			}
-			else {
-				RE::DebugMessageBox("IFrame Generator RE must be installed for DMCO");
-			}
-		}
+		//if (!GetModuleHandle(L"MaxsuIFrame.dll"))
+		//{
+		//	if (REL::Module::IsAE()) {
+		//		RE::DebugMessageBox("IFrame Generator RE must be installed for DMCO\n Install the \"AE Support\" version");
+		//	}
+		//	else {
+		//		RE::DebugMessageBox("IFrame Generator RE must be installed for DMCO");
+		//	}
+		//}
 		break;
+	case SKSE::MessagingInterface::kPostLoadGame:
+	case SKSE::MessagingInterface::kNewGame:
+		Events::AnimationEventHandler::Register();
 	}
 }
 

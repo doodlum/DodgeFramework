@@ -2,6 +2,13 @@
 
 namespace Events
 {
+	class AnimationEventHandler : public RE::BSTEventSink<RE::BSAnimationGraphEvent>
+	{
+	public:
+		virtual RE::BSEventNotifyControl ProcessEvent(const RE::BSAnimationGraphEvent* a_event, RE::BSTEventSource<RE::BSAnimationGraphEvent>* a_eventSource);
+		static bool                      Register();
+	};
+
 	class InputEventHandler : public RE::BSTEventSink<RE::InputEvent*>
 	{
 	public:
@@ -9,7 +16,7 @@ namespace Events
 
 		static InputEventHandler* GetSingleton();
 
-		virtual EventResult			ProcessEvent(RE::InputEvent* const* a_event, RE::BSTEventSource<RE::InputEvent*>* a_eventSource) override;
+		virtual EventResult ProcessEvent(RE::InputEvent* const* a_event, RE::BSTEventSource<RE::InputEvent*>* a_eventSource) override;
 
 	private:
 		enum : uint32_t

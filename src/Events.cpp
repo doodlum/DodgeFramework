@@ -72,6 +72,30 @@ namespace Events
 		return EventResult::kContinue;
 	}
 
+	std::string GetDodgeEvent()
+	{
+		auto normalizedInputDirection = Vec2Normalize(RE::PlayerControls::GetSingleton()->data.prevMoveVec);
+		if (normalizedInputDirection.x == 0.f && normalizedInputDirection.y == 0.f) {
+			return "TKDodgeBack";
+		}
+		RE::NiPoint2 forwardVector(0.f, 1.f);
+		float dodgeAngle = GetAngle(normalizedInputDirection, forwardVector);
+		if (dodgeAngle >= -2 * PI8 && dodgeAngle < 2 * PI8) {
+			return "TKDodgeForward";
+		}
+		else if (dodgeAngle >= -6 * PI8 && dodgeAngle < -2 * PI8) {
+			return "TKDodgeLeft";
+		}
+		else if (dodgeAngle >= 6 * PI8 || dodgeAngle < -6 * PI8) {
+			return "TKDodgeBack";
+		}
+		else if (dodgeAngle >= 2 * PI8 && dodgeAngle < 6 * PI8) {
+			return "TKDodgeRight";
+		}
+
+		return "TKDodgeBack";
+	}
+
 	void Dodge()
 	{
 		auto playerCharacter = RE::PlayerCharacter::GetSingleton();
@@ -81,7 +105,7 @@ namespace Events
 		auto controlMap = RE::ControlMap::GetSingleton();
 
 		if (ui->GameIsPaused() || !controlMap->IsMovementControlsEnabled() || !controlMap->IsLookingControlsEnabled() || ui->IsMenuOpen("Dialogue Menu")
-			|| playerCharacter->AsActorState()->GetSitSleepState() != RE::SIT_SLEEP_STATE::kNormal || playerCharacter->AsActorValueOwner()->GetActorValue(RE::ActorValue::kStamina) <= 0) {
+			|| playerCharacter->AsActorState()->GetSitSleepState() != RE::SIT_SLEEP_STATE::kNormal || playerCharacter->AsActorValueOwner()->GetActorValue(RE::ActorValue::kStamina) <= Settings::fStaminaCost) {
 			return;
 		}
 
@@ -90,84 +114,29 @@ namespace Events
 			return;
 		}
 
-		auto normalizedInputDirection = Vec2Normalize(playerControls->data.prevMoveVec);
-		if (normalizedInputDirection.x == 0.f && normalizedInputDirection.y == 0.f)
+		int iStep = Settings::bUseDefaultDodgeRoll? 0 : 2;
+
+		if (Settings::bUsePerkRestrictions)
 		{
-			playerCharacter->SetGraphVariableFloat("Dodge_Angle", PI);
-			playerCharacter->SetGraphVariableInt("Dodge_Direction", kNeutral);
-			playerCharacter->NotifyAnimationGraph("Dodge_N");
-			playerCharacter->NotifyAnimationGraph("Dodge");
-			logger::debug("neutral");
-			return;
+			if (Settings::perkDodgeRoll && playerCharacter->HasPerk(Settings::perkDodgeRoll))
+			{
+				iStep = 0;
+			}
+			else if (Settings::perkStepDodge && playerCharacter->HasPerk(Settings::perkStepDodge))
+			{
+				iStep = 2;
+			}
+			else {
+				return;
+			}
 		}
 
-		RE::NiPoint2 forwardVector(0.f, 1.f);
-		float dodgeAngle = GetAngle(normalizedInputDirection, forwardVector);
+		playerCharacter->SetGraphVariableInt("iStep", iStep);
 
-		if (dodgeAngle >= -PI8 && dodgeAngle < PI8)
-		{
-			playerCharacter->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
-			playerCharacter->SetGraphVariableInt("Dodge_Direction", kForward);
-			playerCharacter->NotifyAnimationGraph("Dodge_F");
-			playerCharacter->NotifyAnimationGraph("Dodge");
-			logger::debug("forward");
+		if (Settings::fIFrameDuration > 0) {
+			playerCharacter->SetGraphVariableFloat("TKDR_IframeDuration", Settings::fIFrameDuration);	// Set invulnerable frame duration
 		}
-		else if (dodgeAngle >= PI8 && dodgeAngle < 3 * PI8)
-		{
-			playerCharacter->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
-			playerCharacter->SetGraphVariableInt("Dodge_Direction", kRightForward);
-			playerCharacter->NotifyAnimationGraph("Dodge_RF");
-			playerCharacter->NotifyAnimationGraph("Dodge");
-			logger::debug("right-forward");
-		}
-		else if (dodgeAngle >= 3 * PI8 && dodgeAngle < 5 * PI8)
-		{
-			playerCharacter->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
-			playerCharacter->SetGraphVariableInt("Dodge_Direction", kRight);
-			playerCharacter->NotifyAnimationGraph("Dodge_R");
-			playerCharacter->NotifyAnimationGraph("Dodge");
-			logger::debug("right");
-		}
-		else if (dodgeAngle >= 5 * PI8 && dodgeAngle < 7 * PI8)
-		{
-			playerCharacter->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
-			playerCharacter->SetGraphVariableInt("Dodge_Direction", kRightBackward);
-			playerCharacter->NotifyAnimationGraph("Dodge_RB");
-			playerCharacter->NotifyAnimationGraph("Dodge");
-			logger::debug("right-backward");
-		}
-		else if (dodgeAngle >= 7 * PI8 || dodgeAngle < 7 * -PI8)
-		{
-			playerCharacter->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
-			playerCharacter->SetGraphVariableInt("Dodge_Direction", kBackward);
-			playerCharacter->NotifyAnimationGraph("Dodge_B");
-			playerCharacter->NotifyAnimationGraph("Dodge");
-			logger::debug("backward");
-		}
-		else if (dodgeAngle >= 7 * -PI8 && dodgeAngle < 5 * -PI8)
-		{
-			playerCharacter->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
-			playerCharacter->SetGraphVariableInt("Dodge_Direction", kLeftBackward);
-			playerCharacter->NotifyAnimationGraph("Dodge_LB");
-			playerCharacter->NotifyAnimationGraph("Dodge");
-			logger::debug("left-backward");
-		}
-		else if (dodgeAngle >= 5 * -PI8 && dodgeAngle < 3 * -PI8)
-		{
-			playerCharacter->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
-			playerCharacter->SetGraphVariableInt("Dodge_Direction", kLeft);
-			playerCharacter->NotifyAnimationGraph("Dodge_L");
-			playerCharacter->NotifyAnimationGraph("Dodge");
-			logger::debug("left");
-		}
-		else if (dodgeAngle >= 3 * -PI8 && dodgeAngle < -PI8)
-		{
-			playerCharacter->SetGraphVariableFloat("Dodge_Angle", dodgeAngle);
-			playerCharacter->SetGraphVariableInt("Dodge_Direction", kLeftForward);
-			playerCharacter->NotifyAnimationGraph("Dodge_LF");
-			playerCharacter->NotifyAnimationGraph("Dodge");
-			logger::debug("left-forward");
-		}
+		playerCharacter->NotifyAnimationGraph(GetDodgeEvent());					// Send TK Dodge Event
 	}
 
 	std::uint32_t InputEventHandler::GetGamepadIndex(RE::BSWin32GamepadDevice::Key a_key)
@@ -237,5 +206,31 @@ namespace Events
 		auto deviceManager = RE::BSInputDeviceManager::GetSingleton();
 		deviceManager->AddEventSink(InputEventHandler::GetSingleton());
 		logger::info("Added input event sink");
+	}
+
+	void ApplyDodgeCost()
+	{
+		if (auto playerCharacter = RE::PlayerCharacter::GetSingleton()) {
+			playerCharacter->AsActorValueOwner()->RestoreActorValue(RE::ACTOR_VALUE_MODIFIER::kDamage, RE::ActorValue::kStamina, -Settings::fStaminaCost);
+		}
+	}
+
+	RE::BSEventNotifyControl AnimationEventHandler::ProcessEvent(const RE::BSAnimationGraphEvent* a_event, RE::BSTEventSource<RE::BSAnimationGraphEvent>*)
+	{
+		std::string stringified = a_event->tag.c_str();
+
+		if (stringified == "TKDR_DodgeStart") {
+			ApplyDodgeCost();
+		}
+
+		return RE::BSEventNotifyControl::kContinue;
+	}
+
+	bool AnimationEventHandler::Register()
+	{
+		static AnimationEventHandler singleton;
+		RE::PlayerCharacter::GetSingleton()->AddAnimationGraphEventSink(&singleton);
+		logger::info("Registered {}", typeid(singleton).name());
+		return true;
 	}
 }
